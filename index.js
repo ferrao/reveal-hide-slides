@@ -15,13 +15,22 @@
         }, function(code, response) {
 
             var limits = JSON.parse(response);
+            var limitsText = (limits.h ? limits.h : '-') + '/' + (limits.v ? limits.v : '-');
 
             console.log('Configured limits are: ' + limits.h + '/' + limits.v);
             Reveal.addEventListener('slidechanged', function(event) {
 
-                if ((limits.h && event.indexh > limits.h - 1) || (limits.v && event.indexv > limits.v - 1)) {
+                // horizontal off limits
+                if ((limits.h && event.indexh > limits.h - 1)) {
 
-                    console.log('You can not go further than ' + (limits.h ? limits.h : '-') + '/' + (limits.v ? limits.v : '-'));
+                    console.log('Horizontal off limits: ' + limitsText);
+                    //Reveal.slide(limits.h ? limits.h - 1 : event.indexh, limits.v ? limits.v - 1 : event.indexv);
+                    Reveal.slide(limits.h ? limits.h - 1 : event.indexh);
+
+                    //vertical off limits, tested only if horizontal limits exceeded
+                } else if (event.indexh === limits.h - 1 && event.indexv > limits.v - 1) {
+
+                    console.log('vertical off limits: ' + limitsText);
                     Reveal.slide(limits.h ? limits.h - 1 : event.indexh, limits.v ? limits.v - 1 : event.indexv);
 
                 }
