@@ -4,42 +4,59 @@
 
     var config = Reveal.getConfig().limits;
 
-    if (!config || !config.path) {
+    if (!config || (!config.path && !Array.isArray(config))) {
         return;
     }
 
     loadScript('plugin/hide-slides/nanoajax.js', 'script', function() {
 
-        nanoajax.ajax({
-            url: config.path
-        }, function(code, response) {
+        var path = config.path;
 
-            var limits = JSON.parse(response);
-            var limitsText = (limits.h ? limits.h : '-') + '/' + (limits.v ? limits.v : '-');
+        if (Array.isArray(config)) {
 
-            console.log('Configured limits are: ' + limits.h + '/' + limits.v);
-            Reveal.addEventListener('slidechanged', function(event) {
-
-                // horizontal off limits
-                if ((limits.h && event.indexh > limits.h - 1)) {
-
-                    console.log('Horizontal off limits: ' + limitsText);
-                    //Reveal.slide(limits.h ? limits.h - 1 : event.indexh, limits.v ? limits.v - 1 : event.indexv);
-                    Reveal.slide(limits.h ? limits.h - 1 : event.indexh);
-
-                    //vertical off limits, tested only if horizontal limits exceeded
-                } else if (event.indexh === limits.h - 1 && event.indexv > limits.v - 1) {
-
-                    console.log('vertical off limits: ' + limitsText);
-                    Reveal.slide(limits.h ? limits.h - 1 : event.indexh, limits.v ? limits.v - 1 : event.indexv);
-
+            config.forEach(function(value) {
+                if (window.location.href.search(value.filter) > 0) {
+                    path = value.path;
                 }
-
             });
+        }
+
+        if (path) {
+
+            nanoajax.ajax({
+                url: path
+            }, function(code, response) {
+                setLimits(JSON.parse(response));
+            });
+
+        }
+
+    });
+
+    function setLimits(limits) {
+        var limitsText = (limits.h ? limits.h : '-') + '/' + (limits.v ? limits.v : '-');
+
+        console.log('Configured limits are: ' + limits.h + '/' + limits.v);
+        Reveal.addEventListener('slidechanged', function(event) {
+
+            // horizontal off limits
+            if ((limits.h && event.indexh > limits.h - 1)) {
+
+                console.log('Horizontal off limits: ' + limitsText);
+                Reveal.slide(limits.h ? limits.h - 1 : event.indexh);
+
+            //vertical off limits, tested only if horizontal limits exceeded
+            } else if (event.indexh === limits.h - 1 && event.indexv > limits.v - 1) {
+
+                console.log('vertical off limits: ' + limitsText);
+                Reveal.slide(limits.h ? limits.h - 1 : event.indexh, limits.v ? limits.v - 1 : event.indexv);
+
+            }
 
         });
 
-    });
+    }
+
 
     // modified from math plugin
     function loadScript(url, type, callback) {

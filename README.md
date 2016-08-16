@@ -13,7 +13,7 @@ dependencies: [{
 }]
 ```
 
-The path to the configuration file should be placed inside the reval configuration section
+The path to the configuration file should be placed inside the reval configuration section:
 
 ```javascript
 Reveal.initialize({
@@ -24,6 +24,22 @@ Reveal.initialize({
 
 ```
 
+Optionally, multiple paths can be configured depending on the URL used to access the slides:
+
+```javascript
+Reveal.initialize({
+	limits: [{
+		path: 'limits/limits-dev.json',
+		filter: 'localhost'
+    }, {
+       path: 'limits/limits.json',
+       filter: 'somekeyword'
+   }]
+)}
+
+```
+
+
 The configuration bellow will not allow slides beyond horizontal 10 and vertical 9 to be presented.
 
 ```json
@@ -32,3 +48,4 @@ The configuration bellow will not allow slides beyond horizontal 10 and vertical
     "v" : 9
 }
 ```
+
