@@ -24,7 +24,12 @@
         if (path) {
 
             nanoajax.ajax({
-                url: path
+                url: path,
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
             }, function(code, response) {
                 setLimits(JSON.parse(response));
             });
@@ -45,7 +50,7 @@
                 console.log('Horizontal off limits: ' + limitsText);
                 Reveal.slide(limits.h ? limits.h - 1 : event.indexh);
 
-            //vertical off limits, tested only if horizontal limits exceeded
+                //vertical off limits, tested only if horizontal limits exceeded
             } else if (event.indexh === limits.h - 1 && event.indexv > limits.v - 1) {
 
                 console.log('vertical off limits: ' + limitsText);
